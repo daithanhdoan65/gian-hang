@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 """Sinh trang web tĩnh "Gian Hàng": một trang chủ nền tảng + mỗi cơ sở một gian hàng.
 
-Dữ liệu: nen_tang.json (tên nền tảng, địa chỉ gốc) và co_so/<slug>/co_so.json (mỗi cơ sở một thư mục, ảnh để ở co_so/<slug>/anh/).
+Dữ liệu: nen_tang.json (tên nền tảng, địa chỉ gốc) và co_so/<slug>/co_so.json (mỗi cơ sở một thư mục;
+ảnh để ở co_so/<slug>/anh/, video .mp4 để ở co_so/<slug>/video/ hoặc điền link YouTube).
 Chạy:  python tao_trang.py [địa chỉ gốc]      (không truyền thì lấy "dia_chi_goc" trong nen_tang.json)
 Ra:
   index.html                      trang chủ: danh sách gian hàng
   <slug>/index.html               gian hàng của cơ sở
   01/<GTIN13>/index.html          trang sản phẩm = đích của mã QR (cấu trúc GS1 Digital Link; GTIN toàn cầu nên không cần <slug>)
   01/0<GTIN13>/index.html         dạng GTIN-14, chuyển về trang trên
+  danh_sach_ma.json               GTIN -> địa chỉ (cho tao_qr.py)
 Thêm cơ sở mới: chép co_so/_mau sang co_so/<slug>, điền, chạy lại. Xem README.md.
 """
 import glob
@@ -19,7 +21,7 @@ import sys
 
 GOC = os.path.dirname(os.path.abspath(__file__))
 e = html.escape
-RESERVED = {"01", "co_so", "style.css", "index.html", "404.html"}
+RESERVED = {"01", "co_so", "font", "style.css", "index.html", "404.html"}
 
 
 def doc(p):
@@ -37,63 +39,105 @@ for f in sorted(glob.glob(os.path.join(GOC, "co_so", "*", "co_so.json"))):
     assert c["slug"] == os.path.basename(os.path.dirname(f)), "slug khong khop ten thu muc: " + c["slug"]
     COSO[c["slug"]] = c
 
+# Phong cách quán cà phê: nền espresso đậm, chữ kem, điểm nhấn vàng caramel; phần thân màu kem. Chữ tiêu đề Playfair Display (lưu sẵn trong font/).
 CSS = """
-:root{--nen:#f6f1e7;--the:#fffdf8;--chu:#241b14;--phu:#6a5d50;--nhan:#8a2a3a;--vang:#b87a14;--vien:#e4d8c2;--nut:#8a2a3a;--nut-chu:#fff}
-@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--nen:#151210;--the:#201a16;--chu:#f1e9dc;--phu:#b7a994;--vang:#e2a948;--vien:#3a2f27}}
+@font-face{font-family:"Playfair Display";font-weight:700;font-style:normal;font-display:swap;src:url(font/pf700.ttf) format("truetype")}
+:root{--ca:#1b110c;--ca2:#2b1b12;--kem:#f6ecdb;--vang:#e6ad4f;--nen:#f6ecdb;--the:#fffaf0;--chu:#2a1c14;--phu:#66554a;--vien:#e2d1b4;--nhan:#8a2a3a;--nut:#8a2a3a;--nut-chu:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--nen:#150e0a;--the:#241a13;--chu:#f4eadb;--phu:#c2b19a;--vien:#3d2e24}}
 *{box-sizing:border-box}
-body{margin:0;background:var(--nen);color:var(--chu);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--nen);color:var(--chu);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 a{color:var(--nhan)}
-.dau{display:flex;align-items:center;gap:12px;padding:10px 16px;background:var(--the);border-bottom:1px solid var(--vien)}
-.dau img{width:40px;height:40px;border-radius:50%;object-fit:cover;flex:none}
-.dau a{text-decoration:none;color:inherit;display:flex;align-items:center;gap:12px;min-width:0}
-.dau b{display:block;font-size:16px;line-height:1.2}
-.dau span{font-size:12px;color:var(--phu)}
-.dau .nt{margin-left:auto;font-size:13px;color:var(--phu);white-space:nowrap}
-main{max-width:680px;margin:0 auto;padding:0 16px 40px}
-.bia{position:relative;margin:0;height:210px;overflow:hidden;background:var(--the)}
-.bia img{width:100%;height:100%;object-fit:cover;object-position:center 35%;display:block}
-.bia:after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.55),transparent 60%)}
-.bia h1{position:absolute;left:16px;right:16px;padding:0;bottom:12px;margin:0;color:#fff;z-index:1;font-size:26px;line-height:1.2;text-shadow:0 1px 6px rgba(0,0,0,.5)}
-.bia h1 small{display:block;font-size:14px;font-weight:400;opacity:.92;margin-top:2px}
-.anh{margin:16px 0 0;border-radius:16px;overflow:hidden;background:var(--the);border:1px solid var(--vien)}
-.anh img{display:block;width:100%;height:auto}
-h1{font-size:24px;line-height:1.25;margin:18px 0 6px}
-h2{font-size:18px;margin:0 0 10px;color:var(--nhan)}
-.chip{display:inline-block;padding:3px 12px;border-radius:999px;background:var(--the);border:1px solid var(--vien);font-size:14px;margin:0 6px 6px 0;color:inherit;text-decoration:none}
-.chip.dam{background:var(--nut);border-color:var(--nut);color:var(--nut-chu)}
-.vet{font-size:13px;color:var(--phu);margin:14px 0 0}
-.vet a{color:var(--phu)}
-.xacthuc{margin:14px 0;padding:12px 14px;border-radius:12px;background:var(--the);border:1px solid var(--vien);border-left:5px solid var(--vang);font-size:15px}
-.xacthuc b{color:var(--vang)}
-section{margin:20px 0;padding:16px;background:var(--the);border:1px solid var(--vien);border-radius:14px}
-dl{margin:0}
-dt{font-size:13px;color:var(--phu);margin-top:10px}
-dt:first-child{margin-top:0}
-dd{margin:2px 0 0}
-ol{margin:0;padding-left:22px}
-ol li{margin:6px 0}
-.video{position:relative;padding-top:56.25%;border-radius:12px;overflow:hidden;background:#000}
+h1,h2,h3,.serif{font-family:"Playfair Display",Georgia,"Times New Roman",serif;font-weight:700;letter-spacing:.2px}
+.w{max-width:980px;margin:0 auto;padding:0 18px}
+.dau{position:sticky;top:0;z-index:5;background:var(--ca);color:var(--kem);border-bottom:2px solid var(--vang)}
+.dau .w{display:flex;align-items:center;gap:12px;height:58px}
+.dau a{color:inherit;text-decoration:none;display:flex;align-items:center;gap:11px;min-width:0}
+.dau img{width:38px;height:38px;border-radius:50%;object-fit:cover;flex:none;border:2px solid var(--vang)}
+.dau b{display:block;font-size:17px;line-height:1.15}
+.dau span{display:block;font-size:12px;opacity:.75}
+.dau .nt{margin-left:auto;font-size:13px;opacity:.85;white-space:nowrap}
+.hero{position:relative;background:var(--ca);color:var(--kem);overflow:hidden;min-height:430px;display:flex;align-items:flex-end}
+.hero>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 30%;opacity:.62}
+.hero:before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(to top,var(--ca) 4%,rgba(27,17,12,.55) 55%,rgba(27,17,12,.25))}
+.hero .w{position:relative;z-index:2;width:100%;padding-bottom:64px;padding-top:60px}
+.tag{display:inline-block;padding:4px 14px;border:1.5px solid var(--vang);border-radius:999px;color:var(--vang);font-size:13px;letter-spacing:1.4px;text-transform:uppercase;font-weight:600}
+.hero h1{font-size:44px;line-height:1.1;margin:14px 0 6px;color:#fff}
+.hero .kh{font-size:20px;color:var(--vang);margin:0 0 20px;font-family:"Playfair Display",Georgia,serif}
+.btn,.nut a{display:inline-block;text-align:center;padding:13px 22px;border-radius:999px;background:var(--nut);color:var(--nut-chu);text-decoration:none;font-weight:700;font-size:15px;border:2px solid var(--nut)}
+.btn.vang{background:var(--vang);border-color:var(--vang);color:var(--ca)}
+.btn.vien,.nut a.phu{background:transparent;color:var(--nhan);border-color:var(--nhan)}
+.dem .btn.vien,.dem .nut a.phu,.hero .btn.vien{color:var(--kem);border-color:rgba(246,236,219,.7)}
+.dem .nut a{background:var(--vang);border-color:var(--vang);color:var(--ca)}
+.dem .nut a.phu{background:transparent;color:var(--kem);border-color:rgba(246,236,219,.7)}
+.hang{display:flex;flex-wrap:wrap;gap:10px}
+.nut{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.nut a{flex:1 1 150px}
+.dem{background:var(--ca);color:var(--kem);padding:44px 0}
+.dem h2{color:var(--vang)}
+.dem a{color:var(--vang)}
+.moi{padding:44px 0}
+h2{font-size:30px;line-height:1.2;margin:0 0 6px}
+.phude{margin:0 0 22px;color:var(--phu)}
+.dem .phude{color:rgba(246,236,219,.78)}
+.mach{display:grid;grid-template-columns:1fr;gap:12px;margin:-26px auto 0;position:relative;z-index:3}
+.mach div{background:var(--the);border:1px solid var(--vien);border-top:3px solid var(--vang);border-radius:14px;padding:16px 18px;box-shadow:0 8px 22px rgba(27,17,12,.14)}
+.mach b{display:block;font-family:"Playfair Display",Georgia,serif;font-size:18px;margin-bottom:2px}
+.mach span{font-size:14px;color:var(--phu)}
+.luoi{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.sp{background:var(--the);border:1px solid var(--vien);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 6px 18px rgba(27,17,12,.08)}
+.sp img{display:block;width:100%;aspect-ratio:3/4;object-fit:cover}
+.sp .nd{padding:12px 14px 16px;display:flex;flex-direction:column;gap:6px;flex:1}
+.sp h3{font-size:17px;line-height:1.3;margin:0}
+.sp .d{font-size:13px;color:var(--phu);letter-spacing:.6px;text-transform:uppercase}
+.kl{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto;padding-top:6px}
+.kl a{padding:6px 16px;border-radius:999px;border:1.5px solid var(--nhan);color:var(--nhan);text-decoration:none;font-weight:700;font-size:14px}
+.kl a:hover{background:var(--nhan);color:#fff}
+.khung-video{display:flex;flex-direction:column;align-items:center;gap:22px}
+.dt{width:100%;max-width:300px;aspect-ratio:9/16;border-radius:26px;border:3px solid var(--vang);overflow:hidden;background:#000;box-shadow:0 14px 40px rgba(0,0,0,.5)}
+.dt video,.dt iframe{width:100%;height:100%;display:block;border:0;object-fit:cover}
+.video{position:relative;padding-top:56.25%;border-radius:14px;overflow:hidden;background:#000;width:100%}
 .video iframe,.video video{position:absolute;inset:0;width:100%;height:100%;border:0}
-.nut{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
-.nut a{flex:1 1 140px;text-align:center;padding:12px 14px;border-radius:12px;background:var(--nut);color:var(--nut-chu);text-decoration:none;font-weight:600}
-.nut a.phu{background:transparent;color:var(--nhan);border:1.5px solid var(--nhan)}
-.luoi{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.the{display:block;text-decoration:none;color:inherit;border:1px solid var(--vien);border-radius:12px;overflow:hidden;background:var(--the)}
-.the img{display:block;width:100%;aspect-ratio:3/4;object-fit:cover}
-.the span{display:block;padding:8px 10px 10px;font-size:14px;line-height:1.35}
-.the small{color:var(--phu)}
-.sp{display:flex;gap:12px;padding:12px 0;border-top:1px solid var(--vien)}
-.sp:first-of-type{border-top:0;padding-top:0}
-.sp img{width:84px;height:112px;object-fit:cover;border-radius:10px;flex:none}
-.sp b{display:block;line-height:1.3}
-.sp p{margin:4px 0 8px;font-size:14px;color:var(--phu)}
-.gh{display:flex;gap:14px;align-items:center;text-decoration:none;color:inherit;padding:14px;border:1px solid var(--vien);border-radius:14px;background:var(--the);margin-bottom:12px}
-.gh img.lg{width:64px;height:64px;border-radius:50%;object-fit:cover;flex:none}
-.gh b{display:block;font-size:17px}
-.gh span{display:block;font-size:14px;color:var(--phu)}
-.gh i{margin-left:auto;font-style:normal;font-size:22px;color:var(--nhan)}
-footer{max-width:680px;margin:0 auto;padding:0 16px 32px;color:var(--phu);font-size:13px}
-@media (min-width:560px){.luoi{grid-template-columns:repeat(3,1fr)}}
+.vet{padding:14px 0 0;font-size:14px;color:var(--phu)}
+.vet a{color:var(--phu)}
+.ct{display:grid;grid-template-columns:1fr;gap:22px;padding:26px 0 8px}
+.ct figure{margin:0;border-radius:20px;overflow:hidden;background:var(--the);border:1px solid var(--vien);box-shadow:0 10px 28px rgba(27,17,12,.16)}
+.ct figure img{display:block;width:100%;height:auto}
+.ct h1{font-size:30px;line-height:1.2;margin:0 0 10px}
+.chip{display:inline-block;padding:4px 14px;border-radius:999px;background:var(--the);border:1px solid var(--vien);font-size:14px;margin:0 6px 8px 0}
+.chip.dam{background:var(--nut);border-color:var(--nut);color:var(--nut-chu);font-weight:700}
+.xacthuc{margin:10px 0 4px;padding:12px 14px;border-radius:12px;background:var(--the);border:1px solid var(--vien);border-left:5px solid var(--vang);font-size:15px}
+.xacthuc b{color:var(--nhan)}
+.bang{margin:18px 0 0;border:1px solid var(--vien);border-radius:14px;overflow:hidden;background:var(--the)}
+.bang div{padding:11px 16px;border-top:1px solid var(--vien)}
+.bang div:first-child{border-top:0}
+.bang dt{font-size:12px;letter-spacing:.8px;text-transform:uppercase;color:var(--phu)}
+.bang dd{margin:2px 0 0}
+.buoc{list-style:none;margin:0;padding:0;counter-reset:b;display:grid;gap:12px}
+.buoc li{counter-increment:b;display:flex;gap:14px;align-items:flex-start;background:var(--the);border:1px solid var(--vien);border-radius:14px;padding:14px 16px}
+.buoc li:before{content:counter(b);flex:none;width:34px;height:34px;border-radius:50%;background:var(--nut);color:var(--nut-chu);font:700 17px/34px "Playfair Display",Georgia,serif;text-align:center}
+.duongdan{font-size:14px;color:var(--phu);padding-top:16px}
+.duongdan a{color:var(--phu)}
+.gh{display:block;text-decoration:none;color:inherit;border:1px solid var(--vien);border-radius:18px;overflow:hidden;background:var(--the);box-shadow:0 6px 18px rgba(27,17,12,.1)}
+.gh .bia{height:150px;background:var(--ca)}
+.gh .bia img{width:100%;height:100%;object-fit:cover;display:block;opacity:.85}
+.gh .tt{display:flex;gap:14px;align-items:center;padding:0 16px 16px;margin-top:-30px}
+.gh .tt img{width:64px;height:64px;border-radius:50%;object-fit:cover;border:3px solid var(--vang);background:#fff;flex:none}
+.gh .tt div{padding-top:30px}
+.gh b{display:block;font-family:"Playfair Display",Georgia,serif;font-size:19px;line-height:1.2}
+.gh span{font-size:14px;color:var(--phu)}
+.chan{background:var(--ca);color:rgba(246,236,219,.8);padding:26px 0 34px;font-size:13px;border-top:2px solid var(--vang)}
+.chan a{color:var(--vang)}
+@media (min-width:720px){
+.hero{min-height:520px}.hero h1{font-size:62px}.hero .kh{font-size:24px}
+.mach{grid-template-columns:repeat(3,1fr)}
+.luoi{grid-template-columns:repeat(3,1fr)}
+.khung-video{flex-direction:row;justify-content:center;gap:56px}
+.khung-video .nd{max-width:360px}
+.ct{grid-template-columns:1fr 1fr;align-items:start;gap:40px}
+.ct figure{position:sticky;top:84px}
+h2{font-size:36px}
+}
 """
 
 
@@ -114,43 +158,46 @@ def kl(sp):
     return "%d g" % sp["kl"]
 
 
-def video_html(url, nhan="Video"):
-    if not url:
-        return ""
+def video_dt(url, goc, tieu_de):
+    """Khung điện thoại dọc cho video của cơ sở. url: link YouTube, hoặc đường dẫn .mp4 trong kho (hay https)."""
     m = re.search(r"(?:youtu\.be/|youtube\.com/(?:watch\?v=|embed/|shorts/))([\w-]{11})", url)
     if m:
-        kh = '<iframe src="https://www.youtube-nocookie.com/embed/%s" title="%s" loading="lazy" allow="encrypted-media; picture-in-picture" allowfullscreen></iframe>' % (m.group(1), e(nhan))
-    elif url.lower().endswith((".mp4", ".webm")):
-        kh = '<video controls preload="metadata" playsinline src="%s"></video>' % e(url)
-    else:
-        return '<section><h2>%s</h2><div class="nut"><a href="%s" rel="noopener">Xem video</a></div></section>' % (e(nhan), e(url))
-    return '<section><h2>%s</h2><div class="video">%s</div></section>' % (e(nhan), kh)
+        return '<div class="dt"><iframe src="https://www.youtube-nocookie.com/embed/%s" title="%s" loading="lazy" allow="encrypted-media; picture-in-picture" allowfullscreen></iframe></div>' % (m.group(1), e(tieu_de))
+    if url.lower().endswith((".mp4", ".webm", ".mov")):
+        src = url if url.startswith("http") else goc + url
+        return '<div class="dt"><video controls preload="metadata" playsinline src="%s#t=0.1"></video></div>' % e(src)
+    return '<div class="nut"><a href="%s" rel="noopener">Xem video</a></div>' % e(url)
+
+
+def khoi_video(c, url, goc, nhan):
+    if not url:
+        return ""
+    return ('<section class="dem" id="video"><div class="w khung-video"><div class="nd"><h2>%s</h2><p class="phude">%s</p></div>%s</div></section>'
+            % (e(nhan), e(c["khau_hieu"] or c["ten"]), video_dt(url, goc, nhan)))
 
 
 def theme(c):
-    if not c:
-        return ""
     return ("<style>:root{--nhan:%s;--nut:%s}@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--nhan:%s}}</style>\n"
             % (c["mau"], c["mau"], c["mau_toi"]))
 
 
 def khung(goc, tieu_de, mo_ta, anh_og, dau, than, c=None, ld="", url=""):
     o = ('<!doctype html>\n<html lang="vi"><head><meta charset="utf-8">\n<meta name="viewport" content="width=device-width,initial-scale=1">\n'
-         '<title>%s</title>\n<meta name="description" content="%s">\n'
+         '<meta name="theme-color" content="#1b110c">\n<title>%s</title>\n<meta name="description" content="%s">\n'
          '<meta property="og:title" content="%s"><meta property="og:description" content="%s"><meta property="og:type" content="website">'
          '<meta property="og:image" content="%s"><meta property="og:url" content="%s">\n'
          '<link rel="stylesheet" href="%sstyle.css">\n%s%s</head><body>\n'
          % (e(tieu_de), e(mo_ta), e(tieu_de), e(mo_ta), e(anh_og), e(url), goc, theme(c or NT), ld))
     o += dau + "\n" + than
     nguoi = ("<p>%s<br>%s</p>" % (e(c["cong_ty"]), e(c["dia_chi"]))) if c else ""
-    o += ('<footer>%s<p>Thông tin sản phẩm do cơ sở cung cấp. Ngày sản xuất xem trên bao bì.<br>'
-          '<a href="%s">%s</a> - mỗi cơ sở một gian hàng thương hiệu.</p></footer>\n</body></html>\n' % (nguoi, goc or "./", e(NT["ten"])))
+    o += ('<footer class="chan"><div class="w">%s<p>Thông tin sản phẩm do cơ sở cung cấp. Ngày sản xuất xem trên bao bì.<br>'
+          '<a href="%s">%s</a> - mỗi cơ sở một gian hàng thương hiệu.</p></div></footer>\n</body></html>\n' % (nguoi, goc or "./", e(NT["ten"])))
     return o
 
 
 def dau_co_so(c, goc):
-    return ('<div class="dau"><a href="%s%s/"><img src="%s%s" alt=""><div><b>%s</b><span>%s</span></div></a>'
-            '<a class="nt" href="%s">%s</a></div>' % (goc, c["slug"], goc, ra(c["slug"], c["logo"]), e(c["ten"]), e(c["nganh"]), goc or "./", e(NT["ten_ngan"])))
+    return ('<header class="dau"><div class="w"><a href="%s%s/"><img src="%s%s" alt=""><div><b class="serif">%s</b><span>%s</span></div></a>'
+            '<a class="nt" href="%s">%s</a></div></header>' % (goc, c["slug"], goc, ra(c["slug"], c["logo"]), e(c["ten"]), e(c["nganh"]), goc or "./", e(NT["ten_ngan"])))
 
 
 def lien_he(c):
@@ -163,7 +210,8 @@ def lien_he(c):
         n += '<a class="phu" href="tel:%s">Gọi %s</a>' % (c["dien_thoai_quoc_te"], e(c["dien_thoai"]))
     if c.get("email"):
         n += '<a class="phu" href="mailto:%s">Gửi email</a>' % e(c["email"])
-    return '<section><h2>Liên hệ</h2><p>%s</p><div class="nut">%s</div></section>' % (e(c["dia_chi"]), n)
+    return ('<section class="dem" id="lien-he"><div class="w"><h2>Liên hệ</h2><p class="phude">%s</p><div class="nut">%s</div></div></section>'
+            % (e(c["dia_chi"]), n))
 
 
 def trang_sp(c, sp):
@@ -177,52 +225,62 @@ def trang_sp(c, sp):
         "image": tuyet_doi(ra(s, d["anh"])), "description": d["gioi_thieu"],
         "brand": {"@type": "Brand", "name": c["ten"]},
         "manufacturer": {"@type": "Organization", "name": c["cong_ty"], "url": c.get("website", "")}, "url": url}, ensure_ascii=False)
-    t = '<main><figure class="anh"><img src="%s%s" alt="%s"></figure>' % (goc, ra(s, d["anh"]), e(ten))
+    t = '<div class="w"><div class="duongdan"><a href="%s">%s</a> &rsaquo; <a href="%s%s/">%s</a></div><div class="ct">' % (goc, e(NT["ten_ngan"]), goc, s, e(c["ten"]))
+    t += '<figure><img src="%s%s" alt="%s"></figure><div>' % (goc, ra(s, d["anh"]), e(ten))
     t += '<h1>%s</h1><span class="chip dam">%s</span><span class="chip">%s</span><span class="chip">Mã vạch %s</span>' % (e(d["ten"]), kl(sp), e(d["dang"]), sp["gtin"])
+    t += '<p>%s</p>' % e(d["gioi_thieu"])
     t += '<div class="xacthuc"><b>Sản phẩm chính hãng %s.</b> Mã GTIN %s đã đăng ký tại Trung tâm Mã số mã vạch quốc gia (GS1 Việt Nam).</div>' % (e(c["ten"]), sp["gtin"])
     t += '<div class="nut"><a href="%s%s/">Vào gian hàng %s</a></div>' % (goc, s, e(c["ten"]))
-    t += '<section><h2>Thông tin sản phẩm</h2><dl><dt>Thành phần</dt><dd>%s</dd><dt>Khối lượng tịnh</dt><dd>%s</dd>' % (e(d["thanh_phan"]), kl(sp))
+    t += '<dl class="bang"><div><dt>Thành phần</dt><dd>%s</dd></div><div><dt>Khối lượng tịnh</dt><dd>%s</dd></div>' % (e(d["thanh_phan"]), kl(sp))
     if d.get("do_am"):
-        t += '<dt>Độ ẩm</dt><dd>%s</dd>' % e(d["do_am"])
-    t += '<dt>Hạn sử dụng</dt><dd>%s</dd><dt>Hướng dẫn bảo quản</dt><dd>%s</dd><dt>Cảnh báo</dt><dd>%s</dd>' % (e(c["han_dung"]), e(c["bao_quan"]), e(c["canh_bao"]))
-    t += '<dt>Nhà sản xuất</dt><dd>%s<br>%s</dd></dl></section>' % (e(c["cong_ty"]), e(c["dia_chi"]))
+        t += '<div><dt>Độ ẩm</dt><dd>%s</dd></div>' % e(d["do_am"])
+    t += '<div><dt>Hạn sử dụng</dt><dd>%s</dd></div><div><dt>Hướng dẫn bảo quản</dt><dd>%s</dd></div><div><dt>Cảnh báo</dt><dd>%s</dd></div>' % (e(c["han_dung"]), e(c["bao_quan"]), e(c["canh_bao"]))
+    t += '<div><dt>Nhà sản xuất</dt><dd>%s<br>%s</dd></div></dl></div></div>' % (e(c["cong_ty"]), e(c["dia_chi"]))
     if d.get("cach_pha"):
-        t += '<section><h2>Cách pha chế (phin)</h2><ol>%s</ol></section>' % "".join("<li>%s</li>" % e(b) for b in d["cach_pha"])
-    t += video_html(sp.get("video") or c.get("video_gioi_thieu"), "Video sản phẩm")
+        t += '<h2 class="serif" style="margin-top:34px">Cách pha chế (phin)</h2><ol class="buoc">%s</ol>' % "".join("<li>%s</li>" % e(b) for b in d["cach_pha"])
+    t += '</div>'
+    t += '<div style="height:36px"></div>'
+    t += khoi_video(c, sp.get("video") or c.get("video_gioi_thieu"), goc, "Video %s" % c["ten"])
     khac = [x for x in c["san_pham"] if x["gtin"] != sp["gtin"]]
     if khac:
-        t += '<section><h2>Sản phẩm khác của %s</h2><div class="luoi">%s</div></section>' % (e(c["ten"]), "".join(
-            '<a class="the" href="../%s/"><img src="%s%s" alt="" loading="lazy"><span>%s<br><small>%s</small></span></a>' % (
-                x["gtin"], goc, ra(s, c["dong"][x["dong"]]["anh"]), e(c["dong"][x["dong"]]["ten_ngan"]), kl(x)) for x in khac))
-    t += lien_he(c) + "</main>"
+        t += '<section class="moi"><div class="w"><h2>Sản phẩm khác của %s</h2><div class="luoi" style="margin-top:16px">%s</div></div></section>' % (e(c["ten"]), "".join(
+            '<div class="sp"><a href="../%s/"><img src="%s%s" alt="" loading="lazy"></a><div class="nd"><h3>%s</h3><span class="d">%s</span><div class="kl"><a href="../%s/">%s</a></div></div></div>' % (
+                x["gtin"], goc, ra(s, c["dong"][x["dong"]]["anh"]), e(c["dong"][x["dong"]]["ten_ngan"]), e(c["dong"][x["dong"]]["dang"]), x["gtin"], kl(x)) for x in khac))
+    t += lien_he(c)
     return khung(goc, ten + " | " + c["ten"], d["gioi_thieu"], tuyet_doi(ra(s, d["anh"])), dau_co_so(c, goc), t, c, ld, url)
 
 
 def trang_co_so(c):
     goc = "../"
     s = c["slug"]
-    t = '<div class="bia"><img src="%s%s" alt=""><h1>%s<small>%s</small></h1></div><main>' % (goc, ra(s, c["anh_bia"]), e(c["ten"]), e(c.get("khau_hieu", "")))
-    t += '<p style="margin-top:16px"><span class="chip dam">%s</span></p><p>%s</p>' % (e(c["nganh"]), e(c["gioi_thieu"]))
-    t += video_html(c.get("video_gioi_thieu"), "Video giới thiệu")
-    t += '<section><h2>Sản phẩm</h2>'
+    t = '<section class="hero"><img src="%s%s" alt=""><div class="w"><span class="tag">%s</span><h1>%s</h1><p class="kh">%s</p>' % (goc, ra(s, c["anh_bia"]), e(c["nganh"]), e(c["ten"]), e(c.get("khau_hieu", "")))
+    t += '<div class="hang"><a class="btn vang" href="#san-pham">Xem sản phẩm</a>%s<a class="btn vien" href="#lien-he">Liên hệ</a></div></div></section>' % (
+        '<a class="btn vien" href="#video">Xem video</a>' if c.get("video_gioi_thieu") else "")
+    if c.get("diem_manh"):
+        t += '<div class="w mach">%s</div>' % "".join("<div><b>%s</b><span>%s</span></div>" % (e(x["t"]), e(x["m"])) for x in c["diem_manh"])
+    t += '<section class="moi" id="san-pham"><div class="w"><h2>Sản phẩm</h2><p class="phude">Chọn quy cách để xem thông tin chi tiết.</p><div class="luoi">'
     for k, d in c["dong"].items():
         sps = [x for x in c["san_pham"] if x["dong"] == k]
         if not sps:
             continue
-        t += '<div class="sp"><img src="%s%s" alt="" loading="lazy"><div><b>%s</b><p>%s</p>%s</div></div>' % (
-            goc, ra(s, d["anh"]), e(d["ten"]), e(d["dang"]),
-            "".join('<a class="chip" href="%s01/%s/">%s</a>' % (goc, x["gtin"], kl(x)) for x in sps))
-    t += '</section>' + lien_he(c) + '</main>'
+        t += '<div class="sp"><a href="%s01/%s/"><img src="%s%s" alt="%s" loading="lazy"></a><div class="nd"><h3>%s</h3><span class="d">%s</span><div class="kl">%s</div></div></div>' % (
+            goc, sps[0]["gtin"], goc, ra(s, d["anh"]), e(d["ten"]), e(d["ten"]), e(d["dang"]),
+            "".join('<a href="%s01/%s/">%s</a>' % (goc, x["gtin"], kl(x)) for x in sps))
+    t += '</div></div></section>'
+    t += khoi_video(c, c.get("video_gioi_thieu"), goc, "Xem %s qua video" % c["ten"])
+    t += '<section class="moi"><div class="w"><h2>Về %s</h2><p>%s</p></div></section>' % (e(c["ten"]), e(c["gioi_thieu"]))
+    t += lien_he(c)
     return khung(goc, c["ten"] + " | " + NT["ten"], c["gioi_thieu"], tuyet_doi(ra(s, c["anh_bia"])), dau_co_so(c, goc), t, c, "", tuyet_doi(s + "/"))
 
 
 def trang_chu():
-    d = '<div class="dau"><a href="./"><div><b>%s</b><span>Quét mã trên bao bì để xem thông tin sản phẩm</span></div></a></div>' % e(NT["ten"])
-    t = '<main><h1>%s</h1><p>%s</p><section><h2>Các gian hàng</h2>' % (e(NT["ten"]), e(NT["mo_ta"]))
+    d = '<header class="dau"><div class="w"><a href="./"><div><b class="serif">%s</b><span>Quét mã trên bao bì để xem thông tin sản phẩm</span></div></a></div></header>' % e(NT["ten"])
+    t = '<section class="hero" style="min-height:300px"><div class="w"><span class="tag">Gian hàng thương hiệu</span><h1 style="font-size:40px">%s</h1><p class="kh" style="color:var(--kem);font-family:system-ui,sans-serif;font-size:17px">%s</p></div></section>' % (e(NT["ten"]), e(NT["mo_ta"]))
+    t += '<section class="moi"><div class="w"><h2>Các gian hàng</h2><p class="phude">Chọn một gian hàng để xem sản phẩm.</p><div class="luoi" style="grid-template-columns:1fr">'
     for c in COSO.values():
-        t += '<a class="gh" href="%s/"><img class="lg" src="%s" alt=""><div><b>%s</b><span>%s - %d sản phẩm</span></div><i>&rsaquo;</i></a>' % (
-            c["slug"], ra(c["slug"], c["logo"]), e(c["ten"]), e(c["nganh"]), len(c["san_pham"]))
-    t += '</section></main>'
+        t += '<a class="gh" href="%s/"><div class="bia"><img src="%s" alt=""></div><div class="tt"><img src="%s" alt=""><div><b>%s</b><span>%s - %d sản phẩm</span></div></div></a>' % (
+            c["slug"], ra(c["slug"], c["anh_bia"]), ra(c["slug"], c["logo"]), e(c["ten"]), e(c["nganh"]), len(c["san_pham"]))
+    t += '</div></div></section>'
     return khung("", NT["ten"], NT["mo_ta"], "", d, t, None, "", BASE + "/")
 
 
@@ -242,6 +300,9 @@ def main():
     da = {}
     for c in COSO.values():
         ghi("%s/index.html" % c["slug"], trang_co_so(c))
+        v = c.get("video_gioi_thieu", "")
+        if v and not v.startswith("http"):
+            assert os.path.exists(os.path.join(GOC, v)), "thieu video: " + v
         for sp in c["san_pham"]:
             g = sp["gtin"]
             assert len(g) == 13 and gtin_ok(g), "GTIN sai so kiem tra: " + g

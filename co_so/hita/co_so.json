@@ -14,8 +14,8 @@
   "logo": "logo.jpeg",
   "anh_bia": "hita-robusta-bot-xay.jpg",
   "mau": "#8a2a3a",
-  "mau_toi": "#e0788a",
-  "video_gioi_thieu": "",
+  "mau_toi": "#e8909f",
+  "video_gioi_thieu": "co_so/hita/video/quang-cao-hita.mp4",
   "bao_quan": "Bảo quản nơi khô ráo, thoáng mát, tránh ánh nắng trực tiếp, không để gần nguồn hương và nơi có mùi lạ.",
   "canh_bao": "Không sử dụng sản phẩm có dấu hiệu hư hỏng hoặc quá hạn sử dụng.",
   "han_dung": "12 tháng kể từ ngày sản xuất (xem ngày sản xuất trên bao bì)",
@@ -62,11 +62,55 @@
     }
   },
   "san_pham": [
-    {"gtin": "8938570838018", "dong": "hat", "kl": 250, "video": ""},
-    {"gtin": "8938570838025", "dong": "hat", "kl": 500, "video": ""},
-    {"gtin": "8938570838032", "dong": "bot", "kl": 250, "video": ""},
-    {"gtin": "8938570838049", "dong": "bot", "kl": 500, "video": ""},
-    {"gtin": "8938570838056", "dong": "mix", "kl": 250, "video": ""},
-    {"gtin": "8938570838063", "dong": "mix", "kl": 500, "video": ""}
+    {
+      "gtin": "8938570838018",
+      "dong": "hat",
+      "kl": 250,
+      "video": ""
+    },
+    {
+      "gtin": "8938570838025",
+      "dong": "hat",
+      "kl": 500,
+      "video": ""
+    },
+    {
+      "gtin": "8938570838032",
+      "dong": "bot",
+      "kl": 250,
+      "video": ""
+    },
+    {
+      "gtin": "8938570838049",
+      "dong": "bot",
+      "kl": 500,
+      "video": ""
+    },
+    {
+      "gtin": "8938570838056",
+      "dong": "mix",
+      "kl": 250,
+      "video": ""
+    },
+    {
+      "gtin": "8938570838063",
+      "dong": "mix",
+      "kl": 500,
+      "video": ""
+    }
+  ],
+  "diem_manh": [
+    {
+      "t": "Nhân xanh Đắk Lắk",
+      "m": "Nguyên liệu từ vùng cà phê Tây Nguyên."
+    },
+    {
+      "t": "Rang mộc nguyên chất",
+      "m": "Dòng hạt và bột Robusta nguyên chất, giữ trọn hương vị tự nhiên của cà phê."
+    },
+    {
+      "t": "Trộn theo gu",
+      "m": "HiTA Mix Gu cho người thích vị đậm đà mà dịu nhẹ."
+    }
   ]
 }

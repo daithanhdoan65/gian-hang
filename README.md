@@ -14,3 +14,6 @@ Trang tĩnh trên GitHub Pages: trang chủ liệt kê các gian hàng; mỗi c�
 
 ## Đổi địa chỉ gốc (tên miền riêng)
 Sửa `dia_chi_goc` trong `nen_tang.json`, chạy lại `tao_trang.py` rồi `tao_qr.py`. Phải chốt trước khi in QR lên bao bì.
+
+## Gian hàng mẫu
+Gian hàng đầu tiên (một cơ sở cà phê, 6 sản phẩm, video, giao diện quán cà phê) đã gỡ khỏi trang ngày 20/11/2026 vì cơ sở có website riêng. Dữ liệu và ảnh vẫn nằm trong lịch sử kho, dùng làm ví dụ: `git show e5f8cee:co_so/hita/co_so.json`; khôi phục cả thư mục: `git checkout e5f8cee -- co_so/hita`.

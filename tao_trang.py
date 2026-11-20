@@ -280,6 +280,8 @@ def trang_chu():
     for c in COSO.values():
         t += '<a class="gh" href="%s/"><div class="bia"><img src="%s" alt=""></div><div class="tt"><img src="%s" alt=""><div><b>%s</b><span>%s - %d sản phẩm</span></div></div></a>' % (
             c["slug"], ra(c["slug"], c["anh_bia"]), ra(c["slug"], c["logo"]), e(c["ten"]), e(c["nganh"]), len(c["san_pham"]))
+    if not COSO:
+        t += '<p>Chưa có gian hàng nào.</p>'
     t += '</div></div></section>'
     return khung("", NT["ten"], NT["mo_ta"], "", d, t, None, "", BASE + "/")
 

@@ -1,13 +1,24 @@
 {
-  "thuong_hieu": "HiTA Cà Phê",
+  "slug": "hita",
+  "ten": "HiTA Cà Phê",
   "cong_ty": "Công ty TNHH Sản xuất Thương mại Xuất nhập khẩu HiTA Roasters",
+  "nganh": "Cà phê rang xay",
+  "khau_hieu": "Đậm đà - Sáng tạo - Việt",
+  "gioi_thieu": "HiTA Roasters là doanh nghiệp rang xay cà phê Việt Nam, chuyên rang mộc nguyên chất từ nhân xanh Đắk Lắk. Đậm đà, sáng tạo, Việt: giữ trọn hương vị nguyên bản trong từng hạt cà phê.",
   "dia_chi": "Số 31 đường Bàu Gia Ló, Khu phố Trung Nghĩa, Phường Xuân Lộc, Thành phố Đồng Nai, Việt Nam",
   "website": "https://hitaroasters.com",
   "email": "info@hitaroasters.com",
   "dien_thoai": "0392 021 686",
   "dien_thoai_quoc_te": "+84392021686",
   "zalo": "https://zalo.me/0392021686",
-  "gioi_thieu": "HiTA Roasters là doanh nghiệp rang xay cà phê Việt Nam, chuyên rang mộc nguyên chất từ nhân xanh Đắk Lắk. Đậm đà, sáng tạo, Việt: giữ trọn hương vị nguyên bản trong từng hạt cà phê.",
+  "logo": "logo.jpeg",
+  "anh_bia": "hita-robusta-bot-xay.jpg",
+  "mau": "#8a2a3a",
+  "mau_toi": "#e0788a",
+  "video_gioi_thieu": "",
+  "bao_quan": "Bảo quản nơi khô ráo, thoáng mát, tránh ánh nắng trực tiếp, không để gần nguồn hương và nơi có mùi lạ.",
+  "canh_bao": "Không sử dụng sản phẩm có dấu hiệu hư hỏng hoặc quá hạn sử dụng.",
+  "han_dung": "12 tháng kể từ ngày sản xuất (xem ngày sản xuất trên bao bì)",
   "dong": {
     "hat": {
       "ten": "Cà phê hạt rang mộc nguyên chất HiTA Robusta",
@@ -50,9 +61,6 @@
       ]
     }
   },
-  "bao_quan": "Bảo quản nơi khô ráo, thoáng mát, tránh ánh nắng trực tiếp, không để gần nguồn hương và nơi có mùi lạ.",
-  "canh_bao": "Không sử dụng sản phẩm có dấu hiệu hư hỏng hoặc quá hạn sử dụng.",
-  "han_dung": "12 tháng kể từ ngày sản xuất (xem ngày sản xuất trên bao bì)",
   "san_pham": [
     {"gtin": "8938570838018", "dong": "hat", "kl": 250, "video": ""},
     {"gtin": "8938570838025", "dong": "hat", "kl": 500, "video": ""},
@@ -60,6 +68,5 @@
     {"gtin": "8938570838049", "dong": "bot", "kl": 500, "video": ""},
     {"gtin": "8938570838056", "dong": "mix", "kl": 250, "video": ""},
     {"gtin": "8938570838063", "dong": "mix", "kl": 500, "video": ""}
-  ],
-  "video_gioi_thieu": ""
+  ]
 }

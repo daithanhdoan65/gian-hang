@@ -1,0 +1,37 @@
+{
+  "slug": "ten-khong-dau-viet-lien",
+  "ten": "Tên thương hiệu trên bao bì",
+  "cong_ty": "Tên đầy đủ pháp nhân (theo giấy đăng ký kinh doanh)",
+  "nganh": "Ngành hàng, ví dụ: Nước mắm truyền thống",
+  "khau_hieu": "Khẩu hiệu in trên bao bì (để trống nếu không có)",
+  "gioi_thieu": "Hai đến ba câu giới thiệu, chép từ bao bì hoặc website cơ sở, không tự bịa.",
+  "dia_chi": "Địa chỉ cơ sở",
+  "website": "",
+  "email": "",
+  "dien_thoai": "0900 000 000",
+  "dien_thoai_quoc_te": "+84900000000",
+  "zalo": "https://zalo.me/0900000000",
+  "logo": "logo.jpeg",
+  "anh_bia": "ten-anh-bia.jpg",
+  "mau": "#1f5a3a",
+  "mau_toi": "#6fcf97",
+  "video_gioi_thieu": "",
+  "bao_quan": "Chép từ mặt sau bao bì.",
+  "canh_bao": "Chép từ mặt sau bao bì.",
+  "han_dung": "Chép từ bao bì",
+  "dong": {
+    "a": {
+      "ten": "Tên đầy đủ sản phẩm (hiện khi quét mã)",
+      "ten_ngan": "Tên ngắn",
+      "dang": "Dạng sản phẩm",
+      "anh": "ten-anh.jpg",
+      "gioi_thieu": "Một hai câu mô tả sản phẩm.",
+      "thanh_phan": "Chép từ bao bì",
+      "do_am": "",
+      "cach_pha": []
+    }
+  },
+  "san_pham": [
+    {"gtin": "8930000000000", "dong": "a", "kl": 250, "video": ""}
+  ]
+}

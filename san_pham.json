@@ -1,0 +1,65 @@
+{
+  "thuong_hieu": "HiTA Cà Phê",
+  "cong_ty": "Công ty TNHH Sản xuất Thương mại Xuất nhập khẩu HiTA Roasters",
+  "dia_chi": "Số 31 đường Bàu Gia Ló, Khu phố Trung Nghĩa, Phường Xuân Lộc, Thành phố Đồng Nai, Việt Nam",
+  "website": "https://hitaroasters.com",
+  "email": "info@hitaroasters.com",
+  "dien_thoai": "0392 021 686",
+  "dien_thoai_quoc_te": "+84392021686",
+  "zalo": "https://zalo.me/0392021686",
+  "gioi_thieu": "HiTA Roasters là doanh nghiệp rang xay cà phê Việt Nam, chuyên rang mộc nguyên chất từ nhân xanh Đắk Lắk. Đậm đà, sáng tạo, Việt: giữ trọn hương vị nguyên bản trong từng hạt cà phê.",
+  "dong": {
+    "hat": {
+      "ten": "Cà phê hạt rang mộc nguyên chất HiTA Robusta",
+      "ten_ngan": "Robusta hạt rang mộc nguyên chất",
+      "dang": "Hạt rang",
+      "anh": "hita-robusta-hat-rang-moc.jpg",
+      "gioi_thieu": "Hạt Robusta rang mộc nguyên chất, không pha trộn. Hạt rang giữ trọn hương vị tự nhiên của cà phê Tây Nguyên, phù hợp xay tại nhà hoặc xay theo ý thích.",
+      "thanh_phan": "Cà phê Robusta rang mộc nguyên chất",
+      "do_am": "",
+      "cach_pha": []
+    },
+    "bot": {
+      "ten": "Cà phê bột xay nguyên chất HiTA Robusta",
+      "ten_ngan": "Robusta bột xay nguyên chất",
+      "dang": "Bột xay",
+      "anh": "hita-robusta-bot-xay.jpg",
+      "gioi_thieu": "Bột cà phê Robusta xay nguyên chất, đóng túi giấy kraft, pha phin dễ dàng tại nhà hoặc quán.",
+      "thanh_phan": "100% Robusta",
+      "do_am": "≤ 5%",
+      "cach_pha": [
+        "Cho vào 3 muỗng cà phê (khoảng 25 - 30 g) vào phin.",
+        "Lắc đều và ép nhẹ nắp gài bên trong.",
+        "Dùng khoảng 30 ml nước sôi 92 - 96 °C chấm vào phin khoảng 1 phút cho cà phê ngấm đều. Sau đó chấm tiếp 50 - 60 ml nước sôi 95 °C.",
+        "Thêm đường, sữa, đá tùy thích theo khẩu vị của bạn."
+      ]
+    },
+    "mix": {
+      "ten": "Cà phê bột xay trộn theo gu HiTA Mix Gu",
+      "ten_ngan": "Mix Gu bột xay trộn theo gu",
+      "dang": "Bột xay trộn",
+      "anh": "hita-mix-gu.jpg",
+      "gioi_thieu": "HiTA Mix Gu: bột xay trộn theo gu, hương vị riêng cho người thích cà phê đậm đà và dịu vị.",
+      "thanh_phan": "Cà phê (60%), đậu nành (35%), caramel, bơ, muối, hương liệu tổng hợp",
+      "do_am": "≤ 5%",
+      "cach_pha": [
+        "Cho vào 3 muỗng cà phê (khoảng 25 - 30 g) vào phin.",
+        "Lắc đều và ép nhẹ nắp gài bên trong.",
+        "Dùng khoảng 30 ml nước sôi 92 - 96 °C chấm vào phin khoảng 1 phút cho cà phê ngấm đều. Sau đó chấm tiếp 50 - 60 ml nước sôi 95 °C.",
+        "Thêm đường, sữa, đá tùy thích theo khẩu vị của bạn."
+      ]
+    }
+  },
+  "bao_quan": "Bảo quản nơi khô ráo, thoáng mát, tránh ánh nắng trực tiếp, không để gần nguồn hương và nơi có mùi lạ.",
+  "canh_bao": "Không sử dụng sản phẩm có dấu hiệu hư hỏng hoặc quá hạn sử dụng.",
+  "han_dung": "12 tháng kể từ ngày sản xuất (xem ngày sản xuất trên bao bì)",
+  "san_pham": [
+    {"gtin": "8938570838018", "dong": "hat", "kl": 250, "video": ""},
+    {"gtin": "8938570838025", "dong": "hat", "kl": 500, "video": ""},
+    {"gtin": "8938570838032", "dong": "bot", "kl": 250, "video": ""},
+    {"gtin": "8938570838049", "dong": "bot", "kl": 500, "video": ""},
+    {"gtin": "8938570838056", "dong": "mix", "kl": 250, "video": ""},
+    {"gtin": "8938570838063", "dong": "mix", "kl": 500, "video": ""}
+  ],
+  "video_gioi_thieu": ""
+}
